@@ -1,0 +1,57 @@
+{% include "head.html" %}
+<!-- modal_confirm_delete.html -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">¿Está seguro que desea eliminar este gasto de forma permanente?</p>
+                <form id="confirmForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="agregar_saldo" id="agregarSaldoInput" value="no">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Eliminar</button>                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let formToSubmit;
+
+        document.querySelectorAll('.delete-confirm').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                formToSubmit = event.target.closest('form');
+                const message = event.target.getAttribute('data-message');
+                document.getElementById('confirmMessage').textContent = message;
+                $('#confirmModal').modal('show');
+            });
+        });
+
+        document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+            if (formToSubmit) {
+                document.getElementById('agregarSaldoInput').value = 'no';
+                formToSubmit.submit();
+            }
+        });
+
+        document.getElementById('confirmDeleteAddSaldoButton').addEventListener('click', function() {
+            if (formToSubmit) {
+                document.getElementById('agregarSaldoInput').value = 'si';
+                formToSubmit.submit();
+            }
+        });
+
+        document.querySelectorAll('.close, .btn-secondary').forEach(function(button) {
+            button.addEventListener('click', function() {
+                $('#confirmModal').modal('hide');
+            });
+        });
+    });
+</script>

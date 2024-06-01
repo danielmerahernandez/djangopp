@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>PEDRO PARRILLA</title>   
+    
+    {% include "head.html" %}
+      
+  </head>
+  <style>
+    .dashboard-card {
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .dashboard-card:hover {
+      transform: scale(1.05);
+    }
+    .dashboard-card i {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+    .dashboard-card .view-link {
+      display: block;
+      margin-top: 10px;
+    }
+    .mentions-card {
+      background-color: #e6f7ff;
+    }
+    .to-do-card {
+      background-color: #fff3e6;
+    }
+    .errors-card {
+      background-color: #ffe6e6;
+    }
+    .text-brown {
+      color: #8B4513;
+    }
+    .text-primary {
+      color: #007bff;
+    }
+    .text-danger {
+      color: #dc3545;
+    }
+  </style>
+  
+<body class="sb-nav-fixed">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let formToSubmit;
+
+      function initializeDeleteButtons() {
+        document.querySelectorAll('.delete-confirm').forEach(function(button) {
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+            formToSubmit = event.target.closest('form');
+            const message = event.target.getAttribute('data-message');
+            document.getElementById('confirmMessage').textContent = message;
+            $('#confirmModal').modal('show');
+          });
+        });
+      }
+
+      document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+        if (formToSubmit) {
+          formToSubmit.submit();
+        }
+      });
+
+      document.querySelectorAll('.close, .btn-secondary').forEach(function(button) {
+        button.addEventListener('click', function() {
+          $('#confirmModal').modal('hide');
+        });
+      });
+
+      initializeDeleteButtons();
+
+      // Reinitialize delete buttons when table updates (if applicable)
+      const observer = new MutationObserver(initializeDeleteButtons);
+      const config = { childList: true, subtree: true };
+      observer.observe(document.querySelector('#datatablesSimple tbody'), config);
+    });
+  </script>
+  {% include "cuenta/nav.html" %}
+  <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+          <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+              <div class="sb-sidenav-menu">
+                  <div class="nav">
+                      
+                      <a class="nav-link" href="{% url 'montos:index' %}">
+                          <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                          control de gastos
+                      </a>
+                      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                          <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                          Administración
+                          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                      </a>
+                      <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                          <nav class="sb-sidenav-menu-nested nav">
+                              <a class="nav-link" href="{% url 'montos:listarGasto' %}">gastos</a>
+                              <a class="nav-link" href="{% url 'montos:listarcuenta' %}">cuentas</a>
+                          </nav>
+                      </div>
+                  </div>
+              </div>
+              <div class="sb-sidenav-footer">
+                  <div class="small">Logged in as:</div>
+                  Start Bootstrap
+              </div>
+          </nav>
+      </div>
+      <div id="layoutSidenav_content">
+          <main>
+            <div class="alert-container">
+              {% if messages %}
+                  <ul class="messages list-group mb-3">
+                      {% for message in messages %}
+                          <li class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                              {{ message }}
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </li>
+                      {% endfor %}
+                  </ul>
+              {% endif %}
+            </div>
+              <div class="container-fluid px-4">  
+                  <br></p>
+                  <a href= "{% url 'montos:crearcuenta' %}"class="btn btn-primary btn-flat">
+                    <i class="fas fa-plus"></i> añadir cuenta
+                  </a>
+                  <br></p>
+                  <div class="card mb-4">
+                      <div class="card-header">
+                          <i class="fas fa-table me-1"></i>
+                          Registros
+                      </div>
+                      <div class="card-body">
+                          <table id="datatablesSimple">
+                              <thead>
+                                  <tr>
+                                      <th>nombre:</th>
+                                      <th>saldo:</th>
+                                      <th>decripcion:</th>   
+                                      <th>acciones:</th>
+                                  </tr>
+                              </thead>
+                              <tfoot>
+                                  <tr>
+                                    <th>nombre:</th>
+                                    <th>saldo:</th>
+                                    <th>decripcion:</th>   
+                                    <th>acciones:</th>
+                                  </tr>
+                              </tfoot>
+                              <tbody>
+                                {% for cuenta in object_list %}
+                                  <tr>
+                                    <td>{{ cuenta.nombre }}</td>
+                                    <td>{{ cuenta.saldo }}</td>
+                                    <td>{{ cuenta.descripcion }}</td>
+                                    <td>
+                                      <a href="{% url 'montos:editarcuenta' cuenta.id %}" class="btn btn-sm btn-warning">Editar</a>
+                                      <form method="post" action="{% url 'montos:eliminarcuenta' cuenta.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger delete-confirm" data-message="¿Está seguro que desea eliminar esta cuenta de forma permanente?">
+                                            Eliminar
+                                        </button>
+                                      </form>
+                                    </td>
+                                  </tr>                      
+                                {% endfor %}
+                                 
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </main>
+          {% include "cuenta/eliminar.html" %}
+          <footer class="py-4 bg-light mt-auto">
+              <div class="container-fluid px-4">
+                  <div class="d-flex align-items-center justify-content-between small">
+                      <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                      <div>
+                          <a href="#">Privacy Policy</a>
+                          &middot;
+                          <a href="#">Terms &amp; Conditions</a>
+                      </div>
+                  </div>
+              </div>
+          </footer>
+      </div>
+  </div>
+  
+</body>
+
+
+</html>

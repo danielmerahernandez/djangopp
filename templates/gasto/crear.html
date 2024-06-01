@@ -1,0 +1,154 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>PEDRO PARRILLA</title>   
+    {% include "head.html" %}
+      
+  </head>
+  <style>
+    .dashboard-card {
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .dashboard-card:hover {
+      transform: scale(1.05);
+    }
+    .dashboard-card i {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+    .dashboard-card .view-link {
+      display: block;
+      margin-top: 10px;
+    }
+    .mentions-card {
+      background-color: #e6f7ff;
+    }
+    .to-do-card {
+      background-color: #fff3e6;
+    }
+    .errors-card {
+      background-color: #ffe6e6;
+    }
+    .text-brown {
+      color: #8B4513;
+    }
+    .text-primary {
+      color: #007bff;
+    }
+    .text-danger {
+      color: #dc3545;
+    }
+  </style>
+  
+<body class="sb-nav-fixed">
+  {% include "nav.html" %}
+  <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+          <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+              <div class="sb-sidenav-menu">
+                  <div class="nav">
+                      
+                      <a class="nav-link" href="{% url 'montos:index' %}">
+                          <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                          control de gastos
+                      </a>
+                      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                          <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                          Administración
+                          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                      </a>
+                      <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                          <nav class="sb-sidenav-menu-nested nav">
+                              <a class="nav-link" href="{% url 'montos:listarGasto' %}">gastos</a>
+                              <a class="nav-link" href="{% url 'montos:listarcuenta' %}">cuentas</a>
+                          </nav>
+                      </div>
+                  </div>
+              </div>
+              <div class="sb-sidenav-footer">
+                  <div class="small">Logged in as:</div>
+                  Start Bootstrap
+              </div>
+          </nav>
+      </div>
+      <div id="layoutSidenav_content">
+          <main>
+              <div class="container-fluid px-4">
+                  
+                <div class="container mt-5">
+                  <br></p>
+                  <div class="card mb-4">
+                      <div class="card-header">
+                          <i class="fas fa-table me-1"></i>
+                          añadir
+                      </div>
+                      <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="cuenta">Cuenta</label>
+                            {% render_field form.cuenta class="form-control" %}
+                            {% if form.cuenta.errors %}
+                                <div class="alert alert-danger">{{ form.cuenta.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            {% render_field form.fecha class="form-control" %}
+                            {% if form.fecha.errors %}
+                                <div class="alert alert-danger">{{ form.fecha.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="motivo">descripcion</label>
+                            {% render_field form.motivo class="form-control" %}
+                            {% if form.motivo.errors %}
+                                <div class="alert alert-danger">{{ form.motivo.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="monto">Monto</label>
+                            {% render_field form.monto class="form-control" %}
+                            {% if form.monto.errors %}
+                                <div class="alert alert-danger">{{ form.monto.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar Gasto</button>
+                        <a href="{% url 'montos:listarGasto' %}" class="btn btn-secondary">Cancelar</a>
+                    </form>
+
+
+
+                  </div>
+              </div>
+          </main>
+          <footer class="py-4 bg-light mt-auto">
+              <div class="container-fluid px-4">
+                  <div class="d-flex align-items-center justify-content-between small">
+                      <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                      <div>
+                          <a href="#">Privacy Policy</a>
+                          &middot;
+                          <a href="#">Terms &amp; Conditions</a>
+                      </div>
+                  </div>
+              </div>
+          </footer>
+      </div>
+  </div>
+</body>
+
+
+</html>
